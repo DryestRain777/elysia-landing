@@ -102,6 +102,33 @@
   onScroll();
 
   /* -----------------------------------------------------------
+     Mobile navigation toggle
+     ----------------------------------------------------------- */
+  const navToggle = $('#navToggle');
+  const mobileNav = $('#mobileNav');
+  if (navToggle && mobileNav && header) {
+    const setMenu = (open) => {
+      header.classList.toggle('menu-open', open);
+      navToggle.setAttribute('aria-expanded', String(open));
+      navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    };
+    navToggle.addEventListener('click', () => {
+      setMenu(!header.classList.contains('menu-open'));
+    });
+    // Close the menu after tapping any in-page link
+    mobileNav.addEventListener('click', (e) => {
+      if (e.target.closest('a')) setMenu(false);
+    });
+    // Close on Escape and when growing past the mobile breakpoint
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setMenu(false);
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 760) setMenu(false);
+    }, { passive: true });
+  }
+
+  /* -----------------------------------------------------------
      Reveal on scroll
      ----------------------------------------------------------- */
   const io = new IntersectionObserver((entries) => {
