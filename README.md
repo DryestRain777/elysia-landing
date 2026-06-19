@@ -1,17 +1,20 @@
 # Elysia Landing
 
-This landing page is now configured for permanent hosting on GitHub Pages.
+This landing page is permanently hosted on GitHub Pages.
 
 ## Permanent shareable URL
-After the first push to GitHub, your site will be available at:
+- **Live site:** https://dryestrain777.github.io/elysia-landing/
+- **Repository:** https://github.com/DryestRain777/elysia-landing
 
-- `https://<your-github-username>.github.io/elysia-landing/`
+## How updates are published
+Every push to the `main` branch automatically rebuilds and redeploys the site via
+the workflow at `.github/workflows/deploy.yml` (GitHub Actions → GitHub Pages).
 
-## One-time publish steps
-1. Create a new GitHub repository named `elysia-landing`.
-2. Push this folder to the `main` branch.
-3. In GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
-4. The workflow at `.github/workflows/deploy.yml` will deploy automatically on each push.
+```bash
+git add -A
+git commit -m "Update site"
+git push
+```
 
 ## Local preview
 Open `index.html` directly, or run a local server:
