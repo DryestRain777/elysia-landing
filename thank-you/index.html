@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H2R525R21M"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H2R525R21M');
+  </script>
+
+  <meta name="robots" content="noindex" />
+  <title>Thank You — ELYSIA by El BioSci</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --navy-900: #0a1a4a;
+      --navy-700: #1a2f6b;
+      --ink: #0c1330;
+      --muted: #5b6480;
+      --line: #e6e9f2;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 32px;
+      font-family: var(--font-sans);
+      color: var(--ink);
+      background: radial-gradient(120% 120% at 50% 0%, #f4f6fc 0%, #eef1f9 60%, #e7ebf6 100%);
+    }
+    .card {
+      max-width: 540px;
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 48px 40px;
+      text-align: center;
+      box-shadow: 0 24px 60px -30px rgba(10, 26, 74, 0.35);
+    }
+    .check {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 20px;
+      color: var(--navy-900);
+    }
+    .check svg { width: 100%; height: 100%; }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--navy-700);
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: 2.4rem;
+      margin: 8px 0 12px;
+    }
+    p { color: var(--muted); line-height: 1.6; margin: 0 auto 12px; }
+    .order {
+      margin: 22px 0;
+      padding: 14px 16px;
+      background: #f7f9ff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-size: 0.9rem;
+      color: var(--ink);
+      word-break: break-all;
+    }
+    .order span { color: var(--muted); }
+    .btn {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      background: var(--navy-900);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .btn:hover { background: var(--navy-700); transform: translateY(-1px); }
+    .fine { font-size: 0.78rem; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="check" aria-hidden="true">
+      <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="m14 27 8 8 16-18"/></svg>
+    </div>
+    <p class="eyebrow">Order Confirmed</p>
+    <h1>Thank you for your order.</h1>
+    <p>Thank you for choosing ELYSIA. A confirmation and itemized invoice have been sent to your inbox, and your package is on its way &mdash; standard 3-day shipping.</p>
+
+    <div class="order" id="orderRef" hidden>
+      <span>Order reference:</span><br />
+      <strong id="orderId"></strong>
+    </div>
+
+    <a class="btn" href="/">Continue browsing</a>
+
+    <p class="fine">Questions about your order? Contact us at <a href="mailto:care@elbiosci.com">care@elbiosci.com</a>.</p>
+  </main>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('session_id');
+
+      // Show the order reference if present.
+      if (sessionId) {
+        document.getElementById('orderId').textContent = sessionId;
+        document.getElementById('orderRef').hidden = false;
+      }
+
+      // Fire the GA4 purchase event once per session (dedupe on refresh).
+      if (typeof gtag === 'function' && sessionId && !sessionStorage.getItem('ga_purchase_' + sessionId)) {
+        gtag('event', 'purchase', {
+          transaction_id: sessionId,
+          currency: 'USD'
+        });
+        sessionStorage.setItem('ga_purchase_' + sessionId, '1');
+      }
+
+      /* -----------------------------------------------------------
+         GOOGLE ADS CONVERSION TAG  (optional — add when ready)
+         -----------------------------------------------------------
+         In Google Ads: Tools → Conversions → create a "Purchase"
+         conversion. You'll get a Conversion ID (AW-XXXXXXXXX) and a
+         Conversion Label. Then uncomment + fill in below:
+
+         gtag('event', 'conversion', {
+           send_to: 'AW-XXXXXXXXX/YOUR_CONVERSION_LABEL',
+           transaction_id: sessionId
+         });
+
+         (Also add the AW-XXXXXXXXX config to the gtag setup in <head>.)
+         ----------------------------------------------------------- */
+    })();
+  </script>
+</body>
+</html>

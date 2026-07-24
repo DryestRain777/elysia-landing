@@ -479,18 +479,9 @@
     const status = params.get('checkout');
     if (!status) return;
 
-    if (status === 'success') {
-      // Report the purchase to GA4. session_id is used as the transaction id
-      // so refreshes don't double-count (GA4 dedupes on transaction_id).
-      const sessionId = params.get('session_id');
-      if (sessionId && !sessionStorage.getItem('ga_purchase_' + sessionId)) {
-        track('purchase', { transaction_id: sessionId, currency: 'USD' });
-        sessionStorage.setItem('ga_purchase_' + sessionId, '1');
-      }
-      cart.clear();
-      renderCart();
-      setTimeout(openModal, 300);
-    } else if (status === 'cancel') {
+    // Note: successful purchases now redirect to /thank-you/ (which fires the
+    // GA4 purchase event). This handler only covers a canceled checkout.
+    if (status === 'cancel') {
       toast('Checkout canceled — your cart is saved.');
     }
 
