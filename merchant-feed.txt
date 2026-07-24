@@ -1,0 +1,4 @@
+id	title	description	link	image_link	availability	price	brand	condition	mpn	identifier_exists
+ELYSIA-1PK	ELYSIA — Single Capsule	A single fast-acting ELYSIA capsule. Precision-blended and third-party tested for purity and performance.	https://elysiabiosci.com/#buy	https://elysiabiosci.com/assets/elysia-single.jpg	in_stock	8.00 USD	ELYSIA	new	ELYSIA-1PK	no
+ELYSIA-3PK	ELYSIA — 3-Pack	Three fast-acting ELYSIA capsules. Save 17%. Precision-blended and third-party tested.	https://elysiabiosci.com/#buy	https://elysiabiosci.com/assets/elysia-3pack.jpg	in_stock	20.00 USD	ELYSIA	new	ELYSIA-3PK	no
+ELYSIA-10PK	ELYSIA — 10-Pack	Ten fast-acting ELYSIA capsules. Best value, save 38%. Precision-blended and third-party tested.	https://elysiabiosci.com/#buy	https://elysiabiosci.com/assets/elysia-10pack.jpg	in_stock	50.00 USD	ELYSIA	new	ELYSIA-10PK	no
