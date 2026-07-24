@@ -24,6 +24,15 @@
      ----------------------------------------------------------- */
   const CHECKOUT_API_URL = 'https://backend-chi-gray-dyc8ffok7c.vercel.app/api/create-checkout-session';
 
+  /* -----------------------------------------------------------
+     Google Analytics (GA4) e-commerce event helper
+     ----------------------------------------------------------- */
+  const track = (eventName, params) => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', eventName, params);
+    }
+  };
+
 
   /* -----------------------------------------------------------
      Generate background wave SVG (matches packaging silver waves)
@@ -304,6 +313,11 @@
       if (cart.has(key)) cart.get(key).qty += 1;
       else cart.set(key, { name, price, priceId, qty: 1 });
       renderCart();
+      track('add_to_cart', {
+        currency: 'USD',
+        value: price,
+        items: [{ item_id: priceId, item_name: `ELYSIA — ${name}`, price, quantity: 1 }],
+      });
       toast(`Added ${name} to cart`);
       openCart();
     });
@@ -407,6 +421,24 @@
       if (!resp.ok || !data.url) {
         throw new Error(data.error || 'Unable to start checkout.');
       }
+      // Report the checkout start to GA4.
+      let checkoutValue = 0;
+      const gaItems = [];
+      cart.forEach((it) => {
+        checkoutValue += it.price * it.qty;
+        gaItems.push({
+          item_id: it.priceId,
+          item_name: `ELYSIA — ${it.name}`,
+          price: it.price,
+          quantity: it.qty,
+        });
+      });
+      track('begin_checkout', {
+        currency: 'USD',
+        value: Number(checkoutValue.toFixed(2)),
+        coupon: appliedPromo || undefined,
+        items: gaItems,
+      });
       // Send the buyer to Stripe's hosted checkout page.
       window.location.href = data.url;
     } catch (err) {
@@ -448,6 +480,13 @@
     if (!status) return;
 
     if (status === 'success') {
+      // Report the purchase to GA4. session_id is used as the transaction id
+      // so refreshes don't double-count (GA4 dedupes on transaction_id).
+      const sessionId = params.get('session_id');
+      if (sessionId && !sessionStorage.getItem('ga_purchase_' + sessionId)) {
+        track('purchase', { transaction_id: sessionId, currency: 'USD' });
+        sessionStorage.setItem('ga_purchase_' + sessionId, '1');
+      }
       cart.clear();
       renderCart();
       setTimeout(openModal, 300);
