@@ -474,7 +474,7 @@
       </header>
 
       <div class="pricing">
-        <article class="price-card reveal" data-name="Single Capsule" data-price="8" data-qty="1">
+        <article class="price-card reveal" data-name="Single Capsule" data-price="8" data-qty="1" data-price-id="price_1TwbcVRkoH6u7NG7mMx9WrRa">
           <header>
             <h3>Single</h3>
             <p>Experience it once.</p>
@@ -488,7 +488,7 @@
           <button class="btn btn-outline add-to-cart">Add to cart</button>
         </article>
 
-        <article class="price-card featured reveal" style="--d:.08s" data-name="3-Pack" data-price="20" data-qty="3">
+        <article class="price-card featured reveal" style="--d:.08s" data-name="3-Pack" data-price="20" data-qty="3" data-price-id="price_1TwbcxRkoH6u7NG781qnNTAK">
           <div class="ribbon">Most Popular</div>
           <header>
             <h3>3-Pack</h3>
@@ -503,7 +503,7 @@
           <button class="btn btn-primary add-to-cart">Add to cart</button>
         </article>
 
-        <article class="price-card reveal" style="--d:.16s" data-name="10-Pack" data-price="50" data-qty="10">
+        <article class="price-card reveal" style="--d:.16s" data-name="10-Pack" data-price="50" data-qty="10" data-price-id="price_1TwbdQRkoH6u7NG7F84K2kct">
           <header>
             <h3>10-Pack</h3>
             <p>Save 38%. Best value.</p>
@@ -632,6 +632,11 @@
       </div>
 
       <footer class="cart-foot">
+        <div class="promo">
+          <input type="text" id="promoInput" class="promo-input" placeholder="Promo code" autocomplete="off" spellcheck="false" />
+          <button type="button" class="btn btn-outline promo-apply" id="promoApply">Apply</button>
+        </div>
+        <p class="promo-msg" id="promoMsg" role="status" aria-live="polite"></p>
         <div class="cart-totals">
           <span>Subtotal</span>
           <strong id="cartTotal">$0</strong>

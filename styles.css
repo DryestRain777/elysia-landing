@@ -1348,6 +1348,44 @@ section#buy .pricing { text-align: left; }
   color: var(--ink);
 }
 
+/* Promo code */
+.promo {
+  display: flex;
+  gap: 8px;
+}
+.promo-input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.promo-input:focus {
+  outline: none;
+  border-color: var(--navy-900);
+}
+.promo-apply {
+  flex: 0 0 auto;
+  padding-inline: 18px;
+}
+.promo-msg {
+  margin: 0;
+  font-size: 0.85rem;
+  min-height: 1em;
+}
+.promo-msg.ok {
+  color: #1a7f4b;
+}
+.promo-msg.err {
+  color: #c0392b;
+}
+
 /* =========================================================
    Toast
    ========================================================= */

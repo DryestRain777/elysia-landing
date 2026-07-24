@@ -7,6 +7,25 @@
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
   /* -----------------------------------------------------------
+     STRIPE / CHECKOUT CONFIG  ← ADD YOUR INFO HERE
+     -----------------------------------------------------------
+     This site uses a small serverless backend (see /backend) so it can
+     send invoices and push orders into ShipStation. The browser only ever
+     talks to that backend — the Stripe SECRET key lives safely on the server.
+
+     1. CHECKOUT_API_URL: after you deploy the /backend to Vercel, paste the
+        full URL of the create-checkout-session endpoint here, e.g.
+        'https://your-app.vercel.app/api/create-checkout-session'
+
+     2. Price IDs: Stripe Dashboard → Product catalog → each product's price →
+        copy the ID that starts with "price_...". Paste them into the
+        data-price-id="..." attributes on the <article class="price-card">
+        elements in index.html.
+     ----------------------------------------------------------- */
+  const CHECKOUT_API_URL = 'https://backend-chi-gray-dyc8ffok7c.vercel.app/api/create-checkout-session';
+
+
+  /* -----------------------------------------------------------
      Generate background wave SVG (matches packaging silver waves)
      ----------------------------------------------------------- */
   function buildWaves() {
@@ -190,6 +209,10 @@
   const cartEmpty = $('#cartEmpty');
   const cartTotalEl = $('#cartTotal');
   const checkoutBtn = $('#checkoutBtn');
+  const promoInput = $('#promoInput');
+  const promoApply = $('#promoApply');
+  const promoMsg = $('#promoMsg');
+  let appliedPromo = ''; // validated promo code applied at checkout
 
   const fmt = (n) => `$${n.toFixed(2).replace(/\.00$/, '')}`;
 
@@ -276,9 +299,10 @@
       const card = btn.closest('.price-card');
       const name = card.dataset.name;
       const price = parseFloat(card.dataset.price);
+      const priceId = card.dataset.priceId;
       const key = name;
       if (cart.has(key)) cart.get(key).qty += 1;
-      else cart.set(key, { name, price, qty: 1 });
+      else cart.set(key, { name, price, priceId, qty: 1 });
       renderCart();
       toast(`Added ${name} to cart`);
       openCart();
@@ -310,14 +334,94 @@
     document.body.style.overflow = '';
   };
   $$('[data-close-modal]').forEach((el) => el.addEventListener('click', closeModal));
-  checkoutBtn.addEventListener('click', () => {
+
+  /* -----------------------------------------------------------
+     Promo code
+     ----------------------------------------------------------- */
+  function setPromoMsg(text, kind) {
+    promoMsg.textContent = text || '';
+    promoMsg.classList.remove('ok', 'err');
+    if (kind) promoMsg.classList.add(kind);
+  }
+
+  function applyPromo() {
+    const code = promoInput.value.trim().toUpperCase();
+    if (!code) {
+      appliedPromo = '';
+      setPromoMsg('', null);
+      return;
+    }
+    // We optimistically accept the code here; Stripe does the authoritative
+    // validation when the checkout session is created (invalid codes are
+    // rejected there and surfaced back to the buyer).
+    appliedPromo = code;
+    promoInput.value = code;
+    setPromoMsg(`Code “${code}” will be applied at checkout.`, 'ok');
+  }
+
+  promoApply.addEventListener('click', applyPromo);
+  promoInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      applyPromo();
+    }
+  });
+
+  checkoutBtn.addEventListener('click', async () => {
     if (!cart.size) return;
-    closeCart();
-    setTimeout(() => {
-      openModal();
-      cart.clear();
-      renderCart();
-    }, 250);
+
+    // Build the item list to send to our backend.
+    const items = [];
+    let missingId = false;
+    cart.forEach((item) => {
+      if (!item.priceId || item.priceId.includes('REPLACE_WITH')) missingId = true;
+      items.push({ priceId: item.priceId, quantity: item.qty });
+    });
+
+    const notConfigured =
+      CHECKOUT_API_URL.includes('REPLACE_WITH') || missingId;
+
+    // If the backend / price IDs aren't set up yet, show the demo confirmation.
+    if (notConfigured) {
+      console.warn(
+        'Checkout not configured yet. Set CHECKOUT_API_URL in script.js and ' +
+          'data-price-id values in index.html. Showing demo confirmation instead.'
+      );
+      closeCart();
+      setTimeout(() => {
+        openModal();
+        cart.clear();
+        renderCart();
+      }, 250);
+      return;
+    }
+
+    checkoutBtn.disabled = true;
+    try {
+      const resp = await fetch(CHECKOUT_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items, promotionCode: appliedPromo || undefined }),
+      });
+      const data = await resp.json();
+      if (!resp.ok || !data.url) {
+        throw new Error(data.error || 'Unable to start checkout.');
+      }
+      // Send the buyer to Stripe's hosted checkout page.
+      window.location.href = data.url;
+    } catch (err) {
+      console.error(err);
+      const msg = err.message || 'Something went wrong starting checkout.';
+      // If the promo code was the problem, surface it on the promo box.
+      if (appliedPromo && /promo|code/i.test(msg)) {
+        appliedPromo = '';
+        setPromoMsg(msg, 'err');
+        openCart();
+      } else {
+        toast(msg);
+      }
+      checkoutBtn.disabled = false;
+    }
   });
 
   /* -----------------------------------------------------------
@@ -336,8 +440,30 @@
   });
 
   /* -----------------------------------------------------------
+     Handle return from Stripe Checkout
+     ----------------------------------------------------------- */
+  function handleCheckoutReturn() {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('checkout');
+    if (!status) return;
+
+    if (status === 'success') {
+      cart.clear();
+      renderCart();
+      setTimeout(openModal, 300);
+    } else if (status === 'cancel') {
+      toast('Checkout canceled — your cart is saved.');
+    }
+
+    // Clean the URL so a refresh doesn't re-trigger.
+    const clean = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, clean);
+  }
+
+  /* -----------------------------------------------------------
      Boot
      ----------------------------------------------------------- */
   buildWaves();
   renderCart();
+  handleCheckoutReturn();
 })();
