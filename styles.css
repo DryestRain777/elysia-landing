@@ -1196,6 +1196,35 @@ section#buy .pricing { text-align: left; }
 /* =========================================================
    CTA Band
    ========================================================= */
+/* Newsletter */
+.newsletter-inner { max-width: 640px; margin: 0 auto; text-align: center; }
+.newsletter-form {
+  display: flex;
+  gap: 12px;
+  max-width: 480px;
+  margin: 28px auto 0;
+  flex-wrap: wrap;
+}
+.newsletter-form input[type="email"] {
+  flex: 1 1 240px;
+  padding: 14px 18px;
+  border: 1px solid var(--line, #e6e9f2);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #fff;
+}
+.newsletter-form input[type="email"]:focus {
+  outline: none;
+  border-color: var(--navy-700, #1a2f6b);
+  box-shadow: 0 0 0 3px rgba(108,140,255,0.2);
+}
+.newsletter-form .btn { flex: 0 0 auto; }
+.newsletter-note { margin-top: 14px; }
+@media (max-width: 520px) {
+  .newsletter-form .btn { width: 100%; }
+}
+
 .cta-band {
   background:
     radial-gradient(800px 400px at 20% 0%, rgba(108,140,255,0.25), transparent 60%),
