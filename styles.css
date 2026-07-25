@@ -1547,3 +1547,23 @@ section#buy .pricing { text-align: left; }
   .guarantee { width: 100%; text-align: left; }
   .hero-trust { gap: 14px 18px; }
 }
+
+/* SEO/GEO prose content */
+.prose {
+  max-width: 760px;
+  margin: 0 auto;
+  color: var(--ink);
+}
+.prose h3 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  margin: 32px 0 10px;
+  color: var(--ink);
+}
+.prose p {
+  color: var(--muted);
+  line-height: 1.75;
+  margin: 0 0 16px;
+  font-size: 1.02rem;
+}
+.prose strong { color: var(--ink); }
